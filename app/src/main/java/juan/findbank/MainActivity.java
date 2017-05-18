@@ -5,11 +5,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.opencsv.CSVReader;
@@ -22,13 +26,18 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     Button iniciar;
-    EditText name;
+    int estado=0;
+
     AdapterSQLite.AdminSQLiteOpenHelper helper;
     SQLiteDatabase db;
     AdapterSQLite adapter;
+    ProgressBar barra;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+        barra=(ProgressBar) findViewById(R.id.barra);
+        barra.setProgress(0);
         helper=new AdapterSQLite.AdminSQLiteOpenHelper(this);
         adapter=new AdapterSQLite(this);
         db=helper.getWritableDatabase();
@@ -37,9 +46,20 @@ public class MainActivity extends AppCompatActivity {
         iniciar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent comenzar=new Intent(MainActivity.this,Buscar.class);
-                startActivity(comenzar);
-                alta(v);
+                try {
+                    iniciar.setVisibility(View.INVISIBLE);
+
+
+                    alta(v);
+
+                    Intent comenzar = new Intent(MainActivity.this, Buscar.class);
+                    startActivity(comenzar);
+
+                }
+                catch (Exception e){
+                    Log.e("Error",e.getMessage());
+                }
+
 
 
             }
@@ -107,10 +127,40 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    public class Asynctask_cargar extends AsyncTask<Void,Integer,Void>{
+        @Override
+        protected void onPreExecute(){
+            estado=0;
+            iniciar.setVisibility(View.INVISIBLE);
+            barra.setVisibility(View.VISIBLE);
+        }
 
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            while(estado<100){
+                estado++;
+                publishProgress(estado);
+                SystemClock.sleep(20);
+            }
+            return null;
+        }
+        @Override
+        protected void onProgressUpdate(Integer...values){
+            barra.setProgress(values[0]);
+        }
+        @Override
+        protected void onPostExecute(Void result){
+
+        }
+
+
+    }
 
 
 
 
 
 }
+
+

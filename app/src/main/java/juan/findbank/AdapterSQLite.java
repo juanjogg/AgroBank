@@ -10,6 +10,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.StringBuilderPrinter;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 /**
  * Created by JuanJoseGomezGuarin on 30/04/2017.
  */
@@ -71,21 +73,22 @@ public class AdapterSQLite{
         return deps;
     }
     public String[] obtenerOficina(String dpto,String municipio) {
-        String r[]=new String[15];
+        String[] r=new String[5];
         try {
 
             SQLiteDatabase db = helper.getWritableDatabase();
-            String[] columns = {AdminSQLiteOpenHelper.ar[0], AdminSQLiteOpenHelper.ar[2], AdminSQLiteOpenHelper.ar[3], AdminSQLiteOpenHelper.ar[5], AdminSQLiteOpenHelper.ar[7]};
+            String[] columns = {AdminSQLiteOpenHelper.ar[0],AdminSQLiteOpenHelper.ar[2], AdminSQLiteOpenHelper.ar[3], AdminSQLiteOpenHelper.ar[5], AdminSQLiteOpenHelper.ar[7]};
             Cursor c = db.query(AdminSQLiteOpenHelper.TABLE_NAME, columns, AdminSQLiteOpenHelper.ar[1]+"= '"+dpto+"' AND "+AdminSQLiteOpenHelper.ar[0]+" LIKE '%"+municipio+"%'",null,null,null,AdminSQLiteOpenHelper.ar[0]+" ASC ");
             int cont=0;
             while (c.moveToNext()){
                 int index[]={c.getColumnIndex(AdminSQLiteOpenHelper.ar[0]),c.getColumnIndex(AdminSQLiteOpenHelper.ar[2]),c.getColumnIndex(AdminSQLiteOpenHelper.ar[3]),c.getColumnIndex(AdminSQLiteOpenHelper.ar[5]),c.getColumnIndex(AdminSQLiteOpenHelper.ar[7])};
 
-                r[cont]=c.getString(index[0])+"\n";
-                r[cont]+=c.getString(index[1])+"\n";
-                r[cont]+=c.getString(index[2])+"\n";
-                r[cont]+=c.getString(index[3]);
-                cont++;
+                r[0]=c.getString(index[0]);
+                r[1]=c.getString(index[1]);
+                r[2]=c.getString(index[2]);
+                r[3]=c.getString(index[3]);
+                r[4]=c.getString(index[4]);
+
 
             }
 
@@ -94,6 +97,19 @@ public class AdapterSQLite{
 
         }
         return r;
+    }
+    public ArrayList obtenerOficinas(String departamento){
+        SQLiteDatabase db=helper.getWritableDatabase();
+        String[] colums={AdminSQLiteOpenHelper.ar[0]};
+        Cursor c=db.query(AdminSQLiteOpenHelper.TABLE_NAME,colums,AdminSQLiteOpenHelper.ar[1]+" = '"+departamento+"'",null,null,null,AdminSQLiteOpenHelper.ar[0]+" ASC ");
+        ArrayList<String> oficinas=new ArrayList<>();
+        //int contador=0;
+        while (c.moveToNext()){
+            int oficina=c.getColumnIndex(AdminSQLiteOpenHelper.ar[0]);
+            oficinas.add(c.getString(oficina));
+            //contador++;
+        }
+        return oficinas;
     }
     public static class AdminSQLiteOpenHelper extends SQLiteOpenHelper{
         private static final String DATABASE_NAME="Bancos";
