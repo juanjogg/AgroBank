@@ -1,15 +1,13 @@
 package juan.findbank;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.opencsv.CSVReader;
@@ -22,31 +20,12 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     Button iniciar;
-    EditText name;
+
+
     AdapterSQLite.AdminSQLiteOpenHelper helper;
     SQLiteDatabase db;
     AdapterSQLite adapter;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        helper=new AdapterSQLite.AdminSQLiteOpenHelper(this);
-        adapter=new AdapterSQLite(this);
-        db=helper.getWritableDatabase();
-        setContentView(R.layout.activity_main);
-        this.iniciar=(Button) findViewById(R.id.buttonIniciar2);
-        iniciar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent comenzar=new Intent(MainActivity.this,Buscar.class);
-                startActivity(comenzar);
-                alta(v);
 
-
-            }
-        });
-
-
-    }
     public static final List<String[]> readCSV(Context context){
         List<String[]> questionList=new ArrayList<>();
         AssetManager assetManager=context.getAssets();
@@ -69,7 +48,30 @@ public class MainActivity extends AppCompatActivity {
         return questionList;
     }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
+        helper = new AdapterSQLite.AdminSQLiteOpenHelper(this);
+        adapter = new AdapterSQLite(this);
+        db = helper.getWritableDatabase();
+        setContentView(R.layout.activity_main);
+        this.iniciar = (Button) findViewById(R.id.buttonIniciar2);
+        iniciar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                Intent comenzar = new Intent(MainActivity.this, Buscar.class);
+                startActivity(comenzar);
+                alta(v);
+
+
+            }
+        });
+
+
+    }
 
     public  void alta(View v){
 
